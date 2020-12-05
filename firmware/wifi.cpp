@@ -13,7 +13,8 @@ unsigned long int lastConnectionAttempt = 0;
 
 void waitForConnection(void(*onConnection)()) {
     if(WiFi.status() != WL_CONNECTED) {
-        taskManager.scheduleOnce(600, new ExecWithParameter<void(*)()>(waitForConnection, onConnection), TIME_MILLIS);
+        auto retryTask = new ExecWithParameter<void(*)()>(waitForConnection, onConnection);
+        taskManager.scheduleOnce(600, retryTask, TIME_MILLIS, true);
         blink(2);
         return;
     }
