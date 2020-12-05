@@ -10,6 +10,7 @@ WiFiClient wifiClient;
 String MAC_ADDR = WiFi.macAddress();
 
 unsigned long int lastConnectionAttempt = 0;
+taskid_t wifiTask = 0; 
 
 void waitForConnection(void(*onConnection)()) {
     if(WiFi.status() != WL_CONNECTED) {
@@ -47,8 +48,12 @@ void assertWifiConnection(void(*onConnection)()) {
 }
 
 void connectWifi(void(*onConnection)()) {
+    if(wifiTask) {
+        return;
+    }
+
     auto wifiAssertionTask = new ExecWithParameter<void(*)()>(assertWifiConnection, onConnection);
     
     taskManager.execute(wifiAssertionTask);
-    taskManager.scheduleFixedRate(RECONNECTION_INTERVAL, wifiAssertionTask, TIME_MILLIS);
+    wifiTask = taskManager.scheduleFixedRate(RECONNECTION_INTERVAL, wifiAssertionTask, TIME_MILLIS);
 }
