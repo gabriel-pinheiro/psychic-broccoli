@@ -1,6 +1,6 @@
 #include <TaskManagerIO.h>
 #include "settings.h"
-#include "board.h"
+#include "wifi.h"
 
 void setup() {
 #   ifdef SERIAL_ENABLED
@@ -9,9 +9,9 @@ void setup() {
 #   endif
 
     pinMode(LED_PIN, OUTPUT);
-    taskManager.scheduleFixedRate(2, []{
-        blink(3);
-    }, TIME_SECONDS);
+    connectWifi([]{
+        Serial.println("WIFI CONNECTED");
+    });
 }
 
 void loop() {
