@@ -1,5 +1,6 @@
 #include <TaskManagerIO.h>
 #include "settings.h"
+#include "board.h"
 
 void setup() {
 #   ifdef SERIAL_ENABLED
@@ -7,8 +8,9 @@ void setup() {
     Serial.print("\n\n\n");
 #   endif
 
-    taskManager.scheduleFixedRate(1, []{
-        Serial.println("Hi :)");
+    pinMode(LED_PIN, OUTPUT);
+    taskManager.scheduleFixedRate(2, []{
+        blink(3);
     }, TIME_SECONDS);
 }
 
