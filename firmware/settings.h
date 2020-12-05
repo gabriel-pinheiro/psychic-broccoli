@@ -4,4 +4,6 @@
 // Hardware specific settings
 #include "boards/nodemcu.h"
 
+#define DEBUG
+
 #endif //HT_SETTINGS_H
