@@ -2,6 +2,7 @@
 #include <TaskManagerIO.h>
 #include "settings.h"
 #include "wifi.h"
+#include "mqtt.h"
 
 #ifdef DEBUG
 #   include "debug.h"
@@ -19,12 +20,15 @@ void setup() {
 
     pinMode(LED_PIN, OUTPUT);
     connectWifi([]{
-        Serial.println("WIFI CONNECTED");
+        connectMQTT([](byte* payload, unsigned int length){
+            Serial.println("Received MQTT message");
+        });
     });
 }
 
 void loop() {
     taskManager.runLoop();
+    MQTT.loop();
 #   ifdef DEBUG
     debugLoop();
 #   endif

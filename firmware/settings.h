@@ -6,4 +6,9 @@
 
 #define DEBUG
 
+#define WIFI_SSID     "-"
+#define WIFI_PASSWORD "-"
+#define MQTT_HOST "-"
+#define MQTT_PORT 30000
+
 #endif //HT_SETTINGS_H
