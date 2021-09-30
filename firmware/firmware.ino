@@ -38,6 +38,9 @@ void setup() {
             temperature = dht.readTemperature();
             humidity = dht.readHumidity();
             Serial.printf("[INFO] %.2fC %.0f%\n", temperature, humidity);
+            String message = String(MAC_ADDR) + ";" + String(millis()) + ":" +
+                String(ESP.getFreeHeap()) + ";" + String(temperature) + ":" + String(humidity);
+            MQTT.publish(MQTT_TOPIC_UP, message.c_str());
         });
     });
 }
