@@ -4,6 +4,7 @@
 #include "settings.h"
 #include "wifi.h"
 #include "mqtt.h"
+#include "board.h"
 
 #ifdef DEBUG
 #   include "debug.h"
