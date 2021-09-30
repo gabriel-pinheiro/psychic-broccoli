@@ -29,18 +29,32 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     connectWifi([]{
         connectMQTT([](byte* payload, unsigned int length){
-            if(payload[0] != 'C') {
-                Serial.printf("[WARN] Got unknown packet code '%c'\n", payload[0]);
-                return;
-            }
+            switch(payload[0]) {
+                case 'C': {
+                    Serial.println("[INFO] Got climate request");
+                    temperature = dht.readTemperature();
+                    humidity = dht.readHumidity();
+                    Serial.printf("[INFO] %.2fC %.0f%\n", temperature, humidity);
+                    String climateResponse = String(MAC_ADDR) + ";C;" + String(temperature) + ":" + String(humidity);
+                    MQTT.publish(MQTT_TOPIC_UP, climateResponse.c_str());
+                    break;
+                }
 
-            Serial.println("[INFO] Got climate request");
-            temperature = dht.readTemperature();
-            humidity = dht.readHumidity();
-            Serial.printf("[INFO] %.2fC %.0f%\n", temperature, humidity);
-            String message = String(MAC_ADDR) + ";" + String(millis()) + ":" +
-                String(ESP.getFreeHeap()) + ";" + String(temperature) + ":" + String(humidity);
-            MQTT.publish(MQTT_TOPIC_UP, message.c_str());
+                case 'P': {
+                    Serial.println("[INFO] Got ping request");
+                    // millis since start
+                    unsigned long now = millis();
+                    unsigned int freeHeap = ESP.getFreeHeap();
+                    Serial.printf("[INFO] %lums %u bytes\n", now, freeHeap);
+                    String pingResponse = String(MAC_ADDR) + ";P;" + String(now) + ":" + String(freeHeap);
+                    MQTT.publish(MQTT_TOPIC_UP, pingResponse.c_str());
+                    break;
+                }
+
+                default: {
+                    Serial.printf("[WARN] Got unknown packet code '%c'\n", payload[0]);
+                }
+            }
         });
     });
 }
